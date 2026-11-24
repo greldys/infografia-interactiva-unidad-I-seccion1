@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unidad I - Elementos de los Sistemas Computacionales</title>
+
+<!-- Fuentes de Google: una tipo pixel para los títulos y otra normal para leer -->
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ===== Colores principales (los mismos de la infografía) ===== */
+  :root {
+    --fondo: #171a45;
+    --morado: #2b2d72;     /* Hardware */
+    --rosado: #ff79bd;     /* Software */
+    --verde: #1c6d6b;      /* Firmware */
+    --celeste: #a9f3ff;
+    --amarillo: #ffe27a;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--fondo);
+    color: white;
+    font-family: 'Inter', Arial, sans-serif;
+    line-height: 1.5;
+  }
+
+  .contenedor {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 15px;
+  }
+
+  /* Títulos con letra pixel */
+  .pixel {
+    font-family: 'Press Start 2P', monospace;
+  }
+
+  /* ===== Encabezado ===== */
+  header {
+    text-align: center;
+    padding: 20px 0;
+  }
+  .unidad {
+    display: inline-block;
+    background-color: var(--rosado);
+    color: #2a0620;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+  }
+  h1 {
+    color: var(--celeste);
+    font-size: 28px;
+    line-height: 1.4;
+    text-shadow: 3px 3px 0 #4b3bb0;
+  }
+
+  /* ===== Las 3 definiciones ===== */
+  .definiciones {
+    display: flex;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .definiciones div {
+    flex: 1;
+    padding: 20px;
+  }
+  .definiciones h2 {
+    font-size: 15px;
+    text-align: center;
+  }
+
+  /* Cada capa tiene su color */
+  .hw { background-color: var(--morado); }
+  .sw { background-color: var(--rosado); color: #2a0620; }
+  .fw { background-color: var(--verde); }
+
+  /* ===== Botones de filtro ===== */
+  .filtros {
+    margin: 25px 0 10px;
+  }
+  .filtros p {
+    margin: 10px 0 5px;
+    color: var(--celeste);
+    font-size: 11px;
+  }
+  .boton {
+    background-color: #1f2358;
+    color: white;
+    border: 2px solid #4c51a8;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 3px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .boton.activo {
+    background-color: var(--celeste);
+    color: #10123a;
+  }
+
+  /* ===== Secciones por dispositivo ===== */
+  .dispositivo h2 {
+    color: var(--rosado);
+    font-size: 17px;
+    margin-top: 30px;
+  }
+  .columnas {
+    display: flex;
+    border-radius: 15px;
+    overflow: hidden;
+  }
+  .columna {
+    flex: 1;
+    padding: 12px;
+  }
+  .columna h3 {
+    font-size: 12px;
+    margin-top: 0;
+  }
+
+  /* Cada elemento se puede tocar para ver su detalle */
+  .elemento {
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    border: 2px solid transparent;
+  }
+  .elemento:hover {
+    border-color: var(--amarillo);
+  }
+  .hw .elemento { background-color: #1d1f55; }
+  .sw .elemento { background-color: #ffe3f1; }   /* rosado claro para que se lea mejor */
+  .fw .elemento { background-color: #155553; }
+
+  .nota {
+    font-style: italic;
+    font-size: 13px;
+  }
+
+  /* Clase para esconder cosas con los filtros */
+  .oculto {
+    display: none !important;
+  }
+
+  /* ===== Diagrama del firmware como puente ===== */
+  .puente {
+    margin-top: 40px;
+    background-color: #1f2358;
+    border: 3px solid #4c51a8;
+    border-radius: 15px;
+    padding: 15px;
+  }
+  .puente h2 {
+    color: var(--amarillo);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .puente-cuerpo {
+    display: flex;
+    gap: 15px;
+  }
+  .capas {
+    flex: 1;
+  }
+  .capa {
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: 0.5;   /* las capas apagadas se ven transparentes */
+  }
+  .capa.encendida {
+    opacity: 1;
+    outline: 3px solid var(--amarillo);
+    animation: brillar 1s infinite;   /* la capa encendida parpadea suave */
+  }
+
+  /* ===== ANIMACIONES (lineas que se mueven) ===== */
+
+  /* Linea punteada vertical entre las capas: los puntos van subiendo
+     como si la informacion pasara del hardware hacia arriba */
+  .linea {
+    width: 4px;
+    height: 22px;
+    margin: 0 auto;
+    background: repeating-linear-gradient(to bottom, var(--celeste) 0px, var(--celeste) 6px, transparent 6px, transparent 12px);
+    animation: subir 0.6s linear infinite;
+  }
+  @keyframes subir {
+    from { background-position: 0 12px; }
+    to   { background-position: 0 0; }
+  }
+
+  /* Linea punteada horizontal debajo del titulo de cada dispositivo */
+  .linea-titulo {
+    height: 4px;
+    margin-bottom: 12px;
+    background: repeating-linear-gradient(to right, var(--rosado) 0px, var(--rosado) 10px, transparent 10px, transparent 20px);
+    animation: correr 1s linear infinite;
+  }
+  @keyframes correr {
+    from { background-position: 0 0; }
+    to   { background-position: 20px 0; }
+  }
+
+  /* Brillo de la capa encendida */
+  @keyframes brillar {
+    0%   { box-shadow: 0 0 0px var(--amarillo); }
+    50%  { box-shadow: 0 0 18px var(--amarillo); }
+    100% { box-shadow: 0 0 0px var(--amarillo); }
+  }
+
+  /* El titulo principal flota un poquito */
+  @keyframes flotar {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(-6px); }
+    100% { transform: translateY(0); }
+  }
+  h1 {
+    animation: flotar 3s infinite;
+  }
+  .capa-app { background-color: #ffb3d8; color: #3b0a28; }
+  .capa-so  { background-color: var(--rosado); color: #2a0620; }
+  .capa-fw  { background-color: #2bb3a9; color: #032220; }
+  .capa-hw  { background-color: #5b60e6; }
+
+  .explicacion {
+    flex: 1;
+    background-color: #10123a;
+    border: 2px dashed #5b60e6;
+    border-radius: 10px;
+    padding: 15px;
+  }
+  .explicacion h3 {
+    color: var(--amarillo);
+    margin-top: 5px;
+  }
+
+  /* ===== ¿Cómo trabajan en conjunto? ===== */
+  .conjunto {
+    margin-top: 40px;
+    background-color: var(--rosado);
+    color: #2a0620;
+    border-radius: 40px 15px 15px 15px;
+    padding: 25px;
+    font-weight: bold;
+  }
+  .conjunto h2 {
+    color: white;
+    font-size: 18px;
+    text-shadow: 2px 2px 0 var(--morado);
+  }
+  .firma {
+    display: block;
+    width: fit-content;
+    margin: 20px auto;
+    background-color: var(--morado);
+    color: var(--amarillo);
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-size: 14px;
+  }
+  footer {
+    background-color: #0f1133;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  /* ===== Ventana emergente (modal) ===== */
+  .fondo-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal {
+    background-color: #1f2358;
+    border: 3px solid var(--celeste);
+    border-radius: 15px;
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  .modal h3 {
+    color: var(--celeste);
+    margin-top: 0;
+  }
+  .modal h4 {
+    color: var(--amarillo);
+    margin-bottom: 5px;
+  }
+  .cerrar {
+    float: right;
+    background-color: var(--rosado);
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  /* ===== Para celulares: las columnas se ponen una debajo de otra ===== */
+  @media (max-width: 700px) {
+    .definiciones, .columnas, .puente-cuerpo {
+      flex-direction: column;
+    }
+    h1 {
+      font-size: 18px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="contenedor">
+
+  <!-- ===== ENCABEZADO ===== -->
+  <header>
+    <span class="unidad pixel">UNIDAD I</span>
+    <h1 class="pixel">ELEMENTOS DE LOS SISTEMAS COMPUTACIONALES</h1>
+  </header>
+
+  <!-- ===== DEFINICIONES GENERALES ===== -->
+  <section class="definiciones">
+    <div class="hw">
+      <h2 class="pixel">HARDWARE</h2>
+      <p>Componentes físicos y electrónicos de un sistema computacional, que permiten procesar, almacenar y transmitir información.</p>
+    </div>
+    <div class="sw">
+      <h2 class="pixel">SOFTWARE</h2>
+      <p>Conjunto de programas e instrucciones que administran los recursos del equipo y permiten ejecutar diferentes tareas.</p>
+    </div>
+    <div class="fw">
+      <h2 class="pixel">FIRMWARE</h2>
+      <p>Software integrado en memoria no volátil que inicializa y controla funciones específicas del hardware.</p>
+    </div>
+  </section>
+
+  <!-- ===== FILTROS ===== -->
+  <section class="filtros">
+    <p class="pixel">FILTRAR POR DISPOSITIVO</p>
+    <button class="boton activo" onclick="filtrarDispositivo('todos', this)">Todos</button>
+    <button class="boton" onclick="filtrarDispositivo('pc', this)">Personal Computer</button>
+    <button class="boton" onclick="filtrarDispositivo('tablet', this)">Tablets</button>
+    <button class="boton" onclick="filtrarDispositivo('router', this)">Routers</button>
+
+    <p class="pixel">FILTRAR POR CAPA</p>
+    <button class="boton activo" onclick="filtrarCapa('todas', this)">Todas</button>
+    <button class="boton" onclick="filtrarCapa('hw', this)">Hardware</button>
+    <button class="boton" onclick="filtrarCapa('sw', this)">Software</button>
+    <button class="boton" onclick="filtrarCapa('fw', this)">Firmware</button>
+
+    <p style="color:#ccc; font-size:13px;">👆 Toca cualquier elemento para ver su detalle y un ejemplo.</p>
+  </section>
+
+  <!-- Aquí JavaScript dibuja las secciones de PC, Tablets y Routers -->
+  <div id="dispositivos"></div>
+
+  <!-- ===== DIAGRAMA: EL FIRMWARE COMO PUENTE ===== -->
+  <section class="puente">
+    <h2 class="pixel">EL FIRMWARE COMO PUENTE</h2>
+    <p>Elige un dispositivo y presiona "Siguiente" para ver, paso a paso, qué pasa cuando se enciende el equipo.</p>
+
+    <button class="boton activo" onclick="cambiarEquipo('pc', this)">Laptop / PC</button>
+    <button class="boton" onclick="cambiarEquipo('tablet', this)">Tablet</button>
+    <button class="boton" onclick="cambiarEquipo('router', this)">Router Wi-Fi</button>
+
+    <div class="puente-cuerpo" style="margin-top:15px;">
+      <!-- Las 4 capas, de arriba (alto nivel) hacia abajo (físico) -->
+      <div class="capas">
+        <div class="capa capa-app" id="capa-app" onclick="explicarCapa('app')">APLICACIONES</div>
+        <div class="linea"></div>
+        <div class="capa capa-so"  id="capa-so"  onclick="explicarCapa('so')">SISTEMA OPERATIVO + DRIVERS</div>
+        <div class="linea"></div>
+        <div class="capa capa-fw"  id="capa-fw"  onclick="explicarCapa('fw')">FIRMWARE (PUENTE)</div>
+        <div class="linea"></div>
+        <div class="capa capa-hw"  id="capa-hw"  onclick="explicarCapa('hw')">HARDWARE FÍSICO</div>
+      </div>
+
+      <div class="explicacion">
+        <small id="numeroPaso"></small>
+        <h3 id="tituloPaso"></h3>
+        <p id="textoPaso"></p>
+        <button class="boton" onclick="pasoAnterior()">◀ Anterior</button>
+        <button class="boton" onclick="pasoSiguiente()">Siguiente ▶</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ¿CÓMO TRABAJAN EN CONJUNTO? ===== -->
+  <section class="conjunto">
+    <h2 class="pixel">¿CÓMO TRABAJAN EN CONJUNTO?</h2>
+    <p>El hardware proporciona los recursos físicos; el software contiene las instrucciones y administra las operaciones del sistema; y el firmware, como tipo de software especializado, inicializa y controla funciones esenciales del hardware. Su interacción permite el procesamiento, almacenamiento y transmisión de información.</p>
+  </section>
+
+  <span class="firma pixel">GRELDYS PARRA</span>
+
+  <footer>
+    Stallings, W. (2019). Computer Organization and Architecture (11.ª ed.). Pearson; Kurose, J. F., y Ross, K. W. (2025). Computer Networking: A Top-Down Approach (9.ª ed.). Pearson; Regenscheid, A. (2018). Platform Firmware Resiliency Guidelines (NIST SP 800-193). NIST; Android Developers. (s. f.). Platform Architecture.
+  </footer>
+</div>
+
+<!-- ===== VENTANA EMERGENTE (empieza escondida) ===== -->
+<div class="fondo-modal oculto" id="fondoModal" onclick="cerrarModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="cerrar" onclick="cerrarModal()">X</button>
+    <h3 id="modalTitulo"></h3>
+    <p id="modalTexto"></p>
+    <h4>Detalle</h4>
+    <p id="modalDetalle"></p>
+    <h4>Ejemplo</h4>
+    <p id="modalEjemplo"></p>
+  </div>
+</div>
+
+<script>
+// =====================================================================
+// 1. DATOS DE LA INFOGRAFÍA
+// Cada elemento tiene: nombre, texto (el de la infografía),
+// detalle y ejemplo (lo que sale en la ventana emergente)
+// =====================================================================
+
+var dispositivos = [
+  {
+    id: "pc",
+    titulo: "💻 PERSONAL COMPUTER",
+    hardware: [
+      { nombre: "CPU (procesador):", texto: "ejecuta instrucciones y operaciones de procesamiento.",
+        detalle: "Trabaja con el ciclo búsqueda, decodificación y ejecución: toma una instrucción de la memoria, la interpreta y la resuelve.",
+        ejemplo: "Al sumar dos celdas en una hoja de cálculo, la CPU toma los dos valores, hace la suma y guarda el resultado." },
+      { nombre: "Placa base:", texto: "conecta los componentes y permite su comunicación.",
+        detalle: "Es la tarjeta principal donde van la CPU, la RAM y los conectores. También tiene el chip donde está guardada la BIOS/UEFI.",
+        ejemplo: "Cuando la CPU necesita un archivo del SSD, la petición viaja por los circuitos de la placa base." },
+      { nombre: "Memoria RAM:", texto: "almacena temporalmente los datos de los programas activos.",
+        detalle: "Es memoria volátil: es muy rápida, pero se borra cuando se apaga el equipo.",
+        ejemplo: "Si se va la luz mientras escribes, lo que no guardaste se pierde porque estaba en la RAM." },
+      { nombre: "SSD / HDD:", texto: "conserva el sistema operativo, programas y archivos.",
+        detalle: "Es memoria no volátil. El HDD usa discos magnéticos que giran; el SSD usa memoria flash y por eso es más rápido.",
+        ejemplo: "Al guardar un documento, se copia de la RAM al SSD y queda guardado aunque apagues la laptop." },
+      { nombre: "Fuente de alimentación:", texto: "suministra energía eléctrica al equipo.",
+        detalle: "Convierte la corriente alterna del tomacorriente en corriente continua con los voltajes que necesita cada componente.",
+        ejemplo: "Al presionar el botón de encendido, la fuente le da energía a la placa base y empieza el arranque." },
+      { nombre: "GPU:", texto: "procesa y genera información gráfica.",
+        detalle: "Es un procesador especializado en gráficos que hace muchos cálculos al mismo tiempo. Puede venir integrada o ser una tarjeta aparte.",
+        ejemplo: "Cuando ves un video, la GPU calcula los colores de cada píxel y los manda al monitor." },
+      { nombre: "Periféricos:", texto: "permiten introducir y recibir información (teclado, ratón y monitor).",
+        detalle: "Son dispositivos de entrada (teclado, ratón) y de salida (monitor) que se conectan al equipo.",
+        ejemplo: "Al presionar una tecla, el teclado envía un código y la letra aparece en el monitor." }
+    ],
+    software: [
+      { nombre: "Sistema operativo:", texto: "Windows, Linux o macOS; administra los recursos del equipo y proporciona una interfaz de interacción.",
+        detalle: "Controla los programas, la memoria, los archivos y los dispositivos. Las aplicaciones le piden permiso a él para usar el hardware.",
+        ejemplo: "Si tienes abiertos música y Word, el sistema operativo reparte la CPU y la RAM entre los dos." },
+      { nombre: "Controladores (drivers):", texto: "permiten la comunicación entre el sistema operativo y los dispositivos de hardware.",
+        detalle: "Traducen las órdenes del sistema operativo al 'idioma' de cada dispositivo.",
+        ejemplo: "Para imprimir, el driver convierte el documento en las órdenes que entiende esa impresora." },
+      { nombre: "Aplicaciones:", texto: "programas destinados a tareas específicas, como navegadores, editores de texto, hojas de cálculo y herramientas de diseño.",
+        detalle: "Son los programas que usa la persona. Funcionan encima del sistema operativo.",
+        ejemplo: "Chrome le pide al sistema operativo usar la red para descargar una página web." },
+      { nombre: "Utilidades del sistema:", texto: "herramientas de diagnóstico, mantenimiento y seguridad.",
+        detalle: "Ayudan a revisar y mantener el equipo: antivirus, administrador de tareas, respaldos, etc.",
+        ejemplo: "El Administrador de tareas muestra qué programa está usando más memoria." }
+    ],
+    firmware: [
+      { nombre: "BIOS:", texto: "firmware tradicional que realiza comprobaciones e inicializa componentes durante el encendido.",
+        detalle: "Está en un chip de la placa base. Hace el POST (prueba de encendido) y busca desde dónde arrancar.",
+        ejemplo: "Si la RAM está mal puesta, la BIOS lo detecta y la PC suena con pitidos en vez de encender." },
+      { nombre: "UEFI:", texto: "especificación de firmware moderno que proporciona servicios de inicialización y arranque del sistema operativo.",
+        detalle: "Es el reemplazo moderno de la BIOS. Soporta discos grandes, tiene interfaz gráfica y arranque seguro (Secure Boot).",
+        ejemplo: "Con Secure Boot, la UEFI revisa que el sistema operativo sea confiable antes de arrancarlo." },
+      { nombre: "Firmware de dispositivos:", texto: "controla funciones internas de componentes como discos SSD, tarjetas de red y otros periféricos.",
+        detalle: "Cada componente tiene su propio firmware interno que maneja tareas que el sistema operativo no ve.",
+        ejemplo: "El firmware del SSD decide en qué celdas guardar los datos para que el disco se desgaste parejo." }
+    ]
+  },
+  {
+    id: "tablet",
+    titulo: "📱 TABLETS",
+    hardware: [
+      { nombre: "Pantalla táctil:", texto: "muestra información y recibe órdenes mediante el tacto.",
+        detalle: "Tiene una pantalla (LCD u OLED) y encima una capa táctil que detecta dónde están los dedos.",
+        ejemplo: "Al tocar un ícono, la pantalla detecta la posición y se abre la aplicación." },
+      { nombre: "Procesador (SoC):", texto: "integra unidades de procesamiento y otros circuitos electrónicos.",
+        detalle: "SoC significa 'sistema en un chip': CPU, GPU y otros circuitos están juntos en una sola pieza.",
+        ejemplo: "Al grabar un video, el mismo chip procesa la imagen, la comprime y la muestra." },
+      { nombre: "Memoria RAM:", texto: "almacena temporalmente los datos de aplicaciones activas.",
+        detalle: "Igual que en la PC, es memoria rápida que se borra al apagar.",
+        ejemplo: "Si cambias de app y regresas, la página sigue abierta porque estaba en la RAM." },
+      { nombre: "Almacenamiento interno:", texto: "conserva el sistema operativo, aplicaciones y archivos.",
+        detalle: "Es memoria flash que no se borra al apagar.",
+        ejemplo: "Las fotos que tomas se quedan guardadas aunque reinicies la tablet." },
+      { nombre: "Batería:", texto: "proporciona energía para el funcionamiento autónomo.",
+        detalle: "Normalmente es de litio y tiene un circuito que controla la carga.",
+        ejemplo: "Cuando queda poca batería, el sistema activa el modo ahorro de energía." },
+      { nombre: "Cámaras:", texto: "capturan imágenes y videos.",
+        detalle: "Un sensor convierte la luz en señales eléctricas que luego procesa el SoC.",
+        ejemplo: "Al escanear un código QR, la cámara capta la imagen y una app la lee." },
+      { nombre: "Sensores:", texto: "detectan orientación, movimiento y proximidad.",
+        detalle: "Por ejemplo el acelerómetro, el giroscopio y el sensor de proximidad.",
+        ejemplo: "Al girar la tablet, el acelerómetro lo detecta y la pantalla se pone horizontal." },
+      { nombre: "Conectividad:", texto: "permite conexiones Wi-Fi, Bluetooth y redes móviles, según el modelo.",
+        detalle: "Son módulos de radio con antenas internas.",
+        ejemplo: "Ves una clase por Wi-Fi mientras escuchas con audífonos Bluetooth." }
+    ],
+    software: [
+      { nombre: "Sistema operativo:", texto: "Android o iPadOS, encargado de administrar los recursos y coordinar las operaciones del dispositivo.",
+        detalle: "Android está organizado en capas: el kernel de Linux, una capa que se comunica con el hardware y encima las aplicaciones.",
+        ejemplo: "Si una app en segundo plano usa mucha memoria, el sistema la pausa." },
+      { nombre: "Aplicaciones:", texto: "programas de comunicación, educación, entretenimiento, productividad y navegación.",
+        detalle: "Se instalan desde una tienda y solo pueden usar el hardware con permiso del sistema.",
+        ejemplo: "Google Maps usa el GPS y los datos para mostrar la ruta." },
+      { nombre: "Controladores y servicios del sistema:", texto: "facilitan la interacción entre el sistema operativo y componentes como cámaras, sensores y pantalla táctil.",
+        detalle: "Le permiten a las apps usar el hardware de una forma ordenada.",
+        ejemplo: "Cuando una app pide una foto, el servicio de cámara se comunica con el sensor." },
+      { nombre: "Herramientas de seguridad:", texto: "administran permisos, autenticación y protección de la información.",
+        detalle: "Incluyen permisos por app, bloqueo con PIN o huella y cifrado de datos.",
+        ejemplo: "La primera vez que una app quiere usar el micrófono, sale un aviso para permitir o no." }
+    ],
+    firmware: [
+      { nombre: "Firmware de arranque:", texto: "participa en la inicialización del dispositivo y en la secuencia de arranque.",
+        detalle: "Es lo primero que se ejecuta: prepara la memoria y carga el sistema operativo.",
+        ejemplo: "Mientras sale el logo de la marca, el firmware de arranque está preparando todo." },
+      { nombre: "Firmware de sensores:", texto: "permite controlar y gestionar las funciones de determinados sensores.",
+        detalle: "Funciona en un chip pequeño de bajo consumo que lee los sensores.",
+        ejemplo: "El contador de pasos funciona aunque la pantalla esté apagada." },
+      { nombre: "Firmware de componentes internos:", texto: "interviene en el funcionamiento de circuitos y controladores específicos.",
+        detalle: "Por ejemplo el del controlador táctil o el de la carga de la batería.",
+        ejemplo: "El firmware táctil diferencia un toque de verdad de un roce sin querer." },
+      { nombre: "Firmware de conectividad:", texto: "participa en el funcionamiento de determinados módulos inalámbricos.",
+        detalle: "Los chips de Wi-Fi y Bluetooth tienen su propio firmware.",
+        ejemplo: "Una actualización del firmware Wi-Fi puede hacer la conexión más estable." }
+    ],
+    nota: "Su implementación y distribución varían según el fabricante y el modelo del dispositivo."
+  },
+  {
+    id: "router",
+    titulo: "📡 ROUTERS",
+    hardware: [
+      { nombre: "CPU:", texto: "ejecuta instrucciones y gestiona las operaciones del router.",
+        detalle: "Ejecuta el sistema operativo del router y los protocolos de red.",
+        ejemplo: "Cuando cambia una ruta en la red, la CPU actualiza la tabla de enrutamiento." },
+      { nombre: "Memoria RAM:", texto: "almacena temporalmente información de funcionamiento y procesos activos.",
+        detalle: "Guarda la configuración en uso y las tablas de rutas. Se borra al apagar.",
+        ejemplo: "En Cisco, los cambios quedan en la running-config (RAM) hasta que se guardan." },
+      { nombre: "Memoria Flash:", texto: "conserva el firmware y archivos de configuración.",
+        detalle: "Es memoria que no se borra al apagar.",
+        ejemplo: "Para actualizar el router se copia la nueva imagen del sistema a la Flash." },
+      { nombre: "Puertos WAN:", texto: "conectan el router con redes externas.",
+        detalle: "Es el puerto que va hacia el proveedor de Internet.",
+        ejemplo: "El cable que viene del módem de fibra se conecta al puerto WAN." },
+      { nombre: "Puertos LAN:", texto: "permiten conectar dispositivos a la red local.",
+        detalle: "Son puertos Ethernet (RJ-45) para conectar equipos por cable.",
+        ejemplo: "Una PC conectada por cable tiene una conexión más estable que por Wi-Fi." },
+      { nombre: "Antenas:", texto: "transmiten y reciben señales inalámbricas.",
+        detalle: "Trabajan normalmente en 2,4 GHz y 5 GHz.",
+        ejemplo: "La laptop recibe la señal de las antenas y se conecta al Wi-Fi." },
+      { nombre: "Interfaces de red:", texto: "proporcionan los medios de comunicación entre redes.",
+        detalle: "Cada interfaz conecta el router con una red diferente.",
+        ejemplo: "Un paquete entra por la interfaz de la red local y sale por la que va a Internet." }
+    ],
+    software: [
+      { nombre: "Sistema operativo de red:", texto: "como Cisco IOS o Cisco IOS XE, administra los recursos y proporciona las funciones de operación del router.",
+        detalle: "Maneja las interfaces y los procesos de red. Se configura con comandos (CLI).",
+        ejemplo: "El comando 'show ip route' muestra la tabla de rutas." },
+      { nombre: "Protocolos de enrutamiento:", texto: "como OSPF y BGP, permiten intercambiar información para determinar rutas hacia otras redes.",
+        detalle: "OSPF se usa dentro de una organización y BGP entre redes grandes de Internet.",
+        ejemplo: "Si se cae un enlace, OSPF avisa a los otros routers y se busca otra ruta." },
+      { nombre: "Servicios DHCP:", texto: "asignan automáticamente direcciones IP a los dispositivos clientes.",
+        detalle: "Entregan la IP, la máscara, la puerta de enlace y el DNS.",
+        ejemplo: "Tu teléfono se conecta al Wi-Fi y recibe la IP 192.168.1.25 sin configurar nada." },
+      { nombre: "Firewall:", texto: "aplica reglas para controlar el tráfico de red y restringir conexiones no autorizadas.",
+        detalle: "Revisa el tráfico y decide qué deja pasar y qué bloquea.",
+        ejemplo: "Bloquea conexiones desde Internet que nadie de la casa pidió." },
+      { nombre: "Interfaz de administración:", texto: "permite configurar, supervisar y gestionar el funcionamiento del dispositivo.",
+        detalle: "Puede ser una página web o una consola de comandos.",
+        ejemplo: "Desde la página del router se cambia la clave del Wi-Fi." }
+    ],
+    firmware: [
+      { nombre: "Código de arranque (bootloader):", texto: "participa en la inicialización del dispositivo y la carga de la imagen del sistema. En equipos Cisco, una función equivalente la cumple ROMMON",
+        detalle: "Es lo primero que se ejecuta al encender: busca la imagen del sistema y la carga.",
+        ejemplo: "Si la imagen está dañada, el Cisco se queda en ROMMON y desde ahí se recupera." },
+      { nombre: "Imagen de firmware o sistema:", texto: "contiene el código ejecutable que proporciona las funciones operativas del router.",
+        detalle: "Está guardada en la Flash y se ejecuta en la RAM.",
+        ejemplo: "Se puede cambiar por una versión más nueva del fabricante." },
+      { nombre: "Rutinas de inicialización:", texto: "preparan el procesador, la memoria y las interfaces de comunicación.",
+        detalle: "Revisan la memoria y activan los puertos antes de que arranque el sistema.",
+        ejemplo: "Al encender, las luces de los puertos parpadean mientras se inicializan." },
+      { nombre: "Actualizaciones de firmware:", texto: "incorporan correcciones, mejoras y, según el fabricante, nuevas funciones de seguridad y estabilidad.",
+        detalle: "No se debe apagar el router mientras se actualiza porque se puede dañar.",
+        ejemplo: "El fabricante saca una actualización que corrige un fallo de seguridad." }
+    ]
+  }
+];
+
+
+// =====================================================================
+// 2. DIBUJAR LAS SECCIONES EN LA PÁGINA
+// =====================================================================
+
+var contenedor = document.getElementById("dispositivos");
+
+for (var i = 0; i < dispositivos.length; i++) {
+  var d = dispositivos[i];
+
+  var html = '<section class="dispositivo" data-dispositivo="' + d.id + '">';
+  html += '<h2 class="pixel">' + d.titulo + '</h2>';
+  html += '<div class="linea-titulo"></div>';
+  html += '<div class="columnas">';
+
+  html += crearColumna("hw", "HARDWARE", d.hardware, i);
+  html += crearColumna("sw", "SOFTWARE", d.software, i);
+  html += crearColumna("fw", "FIRMWARE", d.firmware, i, d.nota);
+
+  html += '</div></section>';
+  contenedor.innerHTML += html;
+}
+
+// Arma una columna con sus elementos
+function crearColumna(capa, titulo, lista, numDispositivo, nota) {
+  var html = '<div class="columna ' + capa + '" data-capa="' + capa + '">';
+  html += '<h3 class="pixel">' + titulo + '</h3>';
+
+  for (var j = 0; j < lista.length; j++) {
+    html += '<div class="elemento" onclick="abrirModal(' + numDispositivo + ', \'' + capa + '\', ' + j + ')">';
+    html += '<b>' + lista[j].nombre + '</b> ' + lista[j].texto;
+    html += '</div>';
+  }
+
+  if (nota) {
+    html += '<p class="nota">' + nota + '</p>';
+  }
+  html += '</div>';
+  return html;
+}
+
+
+// =====================================================================
+// 3. FILTROS
+// =====================================================================
+
+var dispositivoElegido = "todos";
+var capaElegida = "todas";
+
+function filtrarDispositivo(valor, boton) {
+  dispositivoElegido = valor;
+  marcarBoton(boton);
+  aplicarFiltros();
+}
+
+function filtrarCapa(valor, boton) {
+  capaElegida = valor;
+  marcarBoton(boton);
+  aplicarFiltros();
+}
+
+// Pone en celeste el botón tocado y quita el color a los demás del mismo grupo
+function marcarBoton(boton) {
+  var hermanos = boton.parentElement.querySelectorAll(".boton");
+  // Solo los botones del mismo grupo (mismo onclick)
+  var grupo = boton.getAttribute("onclick").split("(")[0];
+  for (var i = 0; i < hermanos.length; i++) {
+    if (hermanos[i].getAttribute("onclick").split("(")[0] == grupo) {
+      hermanos[i].classList.remove("activo");
+    }
+  }
+  boton.classList.add("activo");
+}
+
+function aplicarFiltros() {
+  // Mostrar u ocultar dispositivos
+  var secciones = document.querySelectorAll(".dispositivo");
+  for (var i = 0; i < secciones.length; i++) {
+    var id = secciones[i].getAttribute("data-dispositivo");
+    if (dispositivoElegido == "todos" || dispositivoElegido == id) {
+      secciones[i].classList.remove("oculto");
+    } else {
+      secciones[i].classList.add("oculto");
+    }
+  }
+
+  // Mostrar u ocultar columnas (capas)
+  var columnas = document.querySelectorAll(".columna");
+  for (var j = 0; j < columnas.length; j++) {
+    var capa = columnas[j].getAttribute("data-capa");
+    if (capaElegida == "todas" || capaElegida == capa) {
+      columnas[j].classList.remove("oculto");
+    } else {
+      columnas[j].classList.add("oculto");
+    }
+  }
+}
+
+
+// =====================================================================
+// 4. VENTANA EMERGENTE (MODAL)
+// =====================================================================
+
+function abrirModal(numDispositivo, capa, numElemento) {
+  var d = dispositivos[numDispositivo];
+  var lista;
+  if (capa == "hw") lista = d.hardware;
+  if (capa == "sw") lista = d.software;
+  if (capa == "fw") lista = d.firmware;
+
+  var elemento = lista[numElemento];
+
+  document.getElementById("modalTitulo").innerHTML = elemento.nombre;
+  document.getElementById("modalTexto").innerHTML = elemento.texto;
+  document.getElementById("modalDetalle").innerHTML = elemento.detalle;
+  document.getElementById("modalEjemplo").innerHTML = elemento.ejemplo;
+  document.getElementById("fondoModal").classList.remove("oculto");
+}
+
+function cerrarModal() {
+  document.getElementById("fondoModal").classList.add("oculto");
+}
+
+
+// =====================================================================
+// 5. DIAGRAMA: EL FIRMWARE COMO PUENTE
+// Cada paso dice qué capa se ilumina y qué está pasando.
+// El encendido va de abajo (hardware) hacia arriba (aplicaciones).
+// =====================================================================
+
+var pasos = {
+  pc: [
+    { capa: "hw", titulo: "1. Se enciende el equipo", texto: "La fuente de alimentación le da energía a la placa base y la CPU empieza a leer las instrucciones guardadas en el chip de firmware." },
+    { capa: "fw", titulo: "2. BIOS / UEFI revisa todo", texto: "El firmware hace el POST: revisa la RAM, el disco y los demás componentes, y los prepara para funcionar." },
+    { capa: "fw", titulo: "3. Busca el sistema operativo", texto: "La UEFI busca en el SSD el programa que arranca el sistema operativo y le pasa el control." },
+    { capa: "so", titulo: "4. Arranca el sistema operativo", texto: "Windows, Linux o macOS se cargan en la RAM junto con los drivers que manejan cada dispositivo." },
+    { capa: "app", titulo: "5. Ya se pueden usar las aplicaciones", texto: "El usuario abre el navegador o Word. Las aplicaciones le piden al sistema operativo lo que necesitan del hardware." }
+  ],
+  tablet: [
+    { capa: "hw", titulo: "1. Se enciende la tablet", texto: "La batería le da energía al SoC, que empieza a ejecutar un código de arranque grabado de fábrica." },
+    { capa: "fw", titulo: "2. Firmware de arranque", texto: "Prepara la memoria y revisa que el sistema operativo sea confiable antes de cargarlo." },
+    { capa: "fw", titulo: "3. Firmware de los componentes", texto: "Se encienden y preparan la pantalla táctil, los sensores y el Wi-Fi/Bluetooth, cada uno con su firmware." },
+    { capa: "so", titulo: "4. Arranca Android / iPadOS", texto: "El sistema operativo carga sus servicios y controladores para manejar la cámara, los sensores y la pantalla." },
+    { capa: "app", titulo: "5. Pantalla de inicio", texto: "Las aplicaciones quedan listas para usarse." }
+  ],
+  router: [
+    { capa: "hw", titulo: "1. Se enciende el router", texto: "La CPU recibe energía y empieza a ejecutar el código de arranque." },
+    { capa: "fw", titulo: "2. Bootloader / ROMMON", texto: "Las rutinas de inicialización preparan el procesador, la memoria y los puertos." },
+    { capa: "fw", titulo: "3. Carga la imagen del sistema", texto: "El bootloader busca la imagen del sistema en la memoria Flash y la pasa a la RAM." },
+    { capa: "so", titulo: "4. Arranca Cisco IOS", texto: "El sistema operativo de red carga la configuración y activa DHCP, el firewall y los protocolos de enrutamiento." },
+    { capa: "app", titulo: "5. Listo para administrar", texto: "Ya se puede entrar a la interfaz de administración (web o consola) para configurarlo." }
+  ]
+};
+
+// Explicación de cada capa cuando se toca directamente
+var capas = {
+  app: "Aplicaciones: son los programas que usa la persona. No tocan el hardware directamente, le piden todo al sistema operativo.",
+  so: "Sistema operativo + drivers: administra los recursos y, con los drivers, traduce lo que piden las aplicaciones.",
+  fw: "Firmware: es el PUENTE. Es lo primero que se ejecuta al encender, prepara el hardware y le entrega el control al sistema operativo.",
+  hw: "Hardware: son las piezas físicas que procesan, guardan y transmiten la información."
+};
+
+var equipo = "pc";
+var pasoActual = 0;
+
+function mostrarPaso() {
+  var paso = pasos[equipo][pasoActual];
+  iluminarCapa(paso.capa);
+  document.getElementById("numeroPaso").innerHTML = "Paso " + (pasoActual + 1) + " de " + pasos[equipo].length;
+  document.getElementById("tituloPaso").innerHTML = paso.titulo;
+  document.getElementById("textoPaso").innerHTML = paso.texto;
+}
+
+function iluminarCapa(capa) {
+  var nombres = ["app", "so", "fw", "hw"];
+  for (var i = 0; i < nombres.length; i++) {
+    document.getElementById("capa-" + nombres[i]).classList.remove("encendida");
+  }
+  document.getElementById("capa-" + capa).classList.add("encendida");
+}
+
+function pasoSiguiente() {
+  if (pasoActual < pasos[equipo].length - 1) {
+    pasoActual++;
+  } else {
+    pasoActual = 0;   // vuelve a empezar
+  }
+  mostrarPaso();
+}
+
+function pasoAnterior() {
+  if (pasoActual > 0) {
+    pasoActual--;
+  }
+  mostrarPaso();
+}
+
+function cambiarEquipo(nuevoEquipo, boton) {
+  equipo = nuevoEquipo;
+  pasoActual = 0;
+  marcarBoton(boton);
+  mostrarPaso();
+}
+
+function explicarCapa(capa) {
+  iluminarCapa(capa);
+  document.getElementById("numeroPaso").innerHTML = "Capa seleccionada";
+  document.getElementById("tituloPaso").innerHTML = "";
+  document.getElementById("textoPaso").innerHTML = capas[capa];
+}
+
+// Mostrar el primer paso al cargar la página
+mostrarPaso();
+</script>
+</body>
+</html>
